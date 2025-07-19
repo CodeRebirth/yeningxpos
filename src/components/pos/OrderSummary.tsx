@@ -168,7 +168,7 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
                   type="text"
                   value={tableNumber}
                   onChange={(e) => setTableNumber(e.target.value)}
-                  className="w-full bg-viilare-50 h-8 text-sm"
+                  className="w-full bg-gray-50 h-8 text-sm"
                 />
               </div>
               <div>
@@ -177,7 +177,7 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
                   type="tel"
                   value={phoneNumber}
                   onChange={(e) => setPhoneNumber(e.target.value)}
-                  className="w-full bg-viilare-50 h-8 text-sm"
+                  className="w-full bg-gray-50 h-8 text-sm"
                   placeholder="Optional"
                 />
               </div>
@@ -187,7 +187,7 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
                   type="text"
                   value={customerName}
                   onChange={(e) => setCustomerName(e.target.value)}
-                  className="w-full bg-viilare-50 h-8 text-sm"
+                  className="w-full bg-gray-50 h-8 text-sm"
                   placeholder="Optional"
                 />
               </div>

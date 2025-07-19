@@ -185,7 +185,7 @@ const Support = () => {
   return (
     <div className="container mx-auto py-6 space-y-6 h-[90vh] md:h-auto">
       <div className="mb-6">
-        <h1 className="text-3xl font-bold text-gray-800 font-protest">Help & Support</h1>
+        <h1 className="text-3xl font-bold text-gray-800">Help & Support</h1>
         <p className="text-gray-500 font-poppins">Get help with your POS system and account</p>
       </div>
 
@@ -245,7 +245,7 @@ const Support = () => {
                   <div className="flex justify-end">
                     <Button
                       type="submit"
-                      className="bg-viilare-500 hover:bg-viilare-600"
+                      className="bg-viilare-500 hover:bg-viilare-600 text-white"
                       disabled={isSubmitting}
                     >
                       {isSubmitting ? (

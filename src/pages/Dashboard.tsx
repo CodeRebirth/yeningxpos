@@ -511,13 +511,21 @@ const Dashboard = () => {
     return label;
   };
 
+  const primaryColor = getPrimaryColor();
+
+
   if(loading){
     return <Loader2 className="animate-spin" />;
   }
 
   return (
-    <div className="container mx-auto py-6 space-y-6 h-[90vh] md:h-auto">
-      <div className="mb-6">
+<div
+  className="container mx-auto py-6 space-y-6 h-[90vh] md:h-auto"
+  style={{
+    background: `linear-gradient(135deg, ${primaryColor}0 0%, #fff 80%, transparent 100%)`
+  }}
+>
+<div className="mb-6">
         <h1 className="text-3xl font-bold text-gray-800">Dashboard</h1>
         <p className="text-viilare-500">Welcome back, Admin User! Here's what's happening with your business</p>
       </div>
@@ -726,18 +734,29 @@ const Dashboard = () => {
                 </div>
               ) : (
                 topItems.map((item, index) => (
-                  <div key={item.id} className="flex items-center justify-between">
-                    <div className="flex items-center">
-                      <div className="w-10 h-10 rounded-full bg-viilare-500 flex items-center justify-center text-white font-semibold mr-4">
-                        {index + 1}
-                      </div>
-                      <span className="font-medium">{item.name}</span>
-                    </div>
-                    <div className="text-right">
-                      <div className="font-semibold">{item.price}</div>
-                      <div className="text-sm text-gray-500">{item.units} units sold</div>
-                    </div>
-                  </div>
+                  <div
+  key={item.id}
+  className="flex items-center justify-between px-3 py-2 mb-2 rounded-xl border border-gray-100 bg-white/80 shadow-sm hover:shadow-md transition-all gap-3"
+>
+  <div className="flex items-center gap-3 min-w-0">
+    <span className="inline-block min-w-[28px] h-7 px-2 rounded-full bg-[var(--primary-color)]/10 text-[var(--primary-color)] text-xs font-bold flex items-center justify-center mr-1">
+      {index + 1}
+    </span>
+    {item.image && (
+      <img
+        src={item.image}
+        alt={item.name}
+        className="w-10 h-10 object-cover rounded-lg border border-gray-100 bg-gray-50"
+        loading="lazy"
+      />
+    )}
+    <span className="font-semibold text-gray-900 truncate max-w-[120px] sm:max-w-[180px]">{item.name}</span>
+  </div>
+  <div className="flex flex-col items-end min-w-[80px]">
+    <span className="font-bold text-base text-gray-800">₹{item.price}</span>
+    <span className="text-xs text-gray-400 font-medium">{item.units} sold</span>
+  </div>
+</div>
                 ))
               )}
             </div>
@@ -860,28 +879,29 @@ const Dashboard = () => {
                 </div>
               ) : (
                 popularCombinations.map((combo, index) => (
-                  <div key={index} className="p-4 border rounded-lg hover:shadow-md transition-shadow">
-                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-                      <div className="flex items-center">
-                        <div className="w-10 h-10 rounded-full bg-viilare-500 flex items-center justify-center text-white font-semibold mr-4">
-                          {index + 1}
-                        </div>
-                        <div>
-                          <div className="font-medium">{combo.items.join(' + ')}</div>
-                          <div className="text-sm text-gray-500">Purchased together {combo.count} times</div>
-                        </div>
-                      </div>
-                      <div className="text-left sm:text-right mt-3 sm:mt-0">
-                        <div className="text-sm text-gray-500">Combination strength</div>
-                        <div className="w-24 bg-gray-200 rounded-full h-2.5 mt-1">
-                          <div 
-                            className="bg-viilare-500 h-2.5 rounded-full" 
-                            style={{ width: `${Math.min(100, (combo.count / popularCombinations[0].count) * 100)}%` }}
-                          ></div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+                  <div
+  key={index}
+  className="flex flex-col sm:flex-row sm:items-center sm:justify-between px-3 py-2 mb-2 rounded-xl border border-gray-100 bg-white/80 shadow-sm hover:shadow-md transition-all gap-2 sm:gap-3"
+>
+  <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+    <span className="inline-block min-w-[24px] h-6 px-2 rounded-full bg-[var(--primary-color)]/10 text-[var(--primary-color)] text-xs font-bold flex items-center justify-center mr-1">
+      {index + 1}
+    </span>
+    <div className="min-w-0">
+      <div className="font-semibold text-gray-900 whitespace-normal break-words leading-snug">{combo.items.join(' + ')}</div>
+      <div className="text-xs text-gray-400 font-medium whitespace-normal break-words">Purchased together {combo.count} times</div>
+    </div>
+  </div>
+  <div className="flex flex-col items-end min-w-0 sm:min-w-[120px] mt-2 sm:mt-0">
+    <span className="text-xs text-gray-500">Combination strength</span>
+    <div className="w-full sm:w-24 bg-gray-200 rounded-full h-2.5 mt-1">
+      <div
+        className="bg-[var(--primary-color)] h-2.5 rounded-full transition-all duration-300"
+        style={{ width: `${Math.min(100, (combo.count / popularCombinations[0].count) * 100)}%` }}
+      ></div>
+    </div>
+  </div>
+</div>
                 ))
               )}
             </div>

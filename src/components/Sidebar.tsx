@@ -154,8 +154,14 @@ const Sidebar = () => {
       onMouseLeave={handleMouseLeave}
     >
       <div className="flex items-center justify-center p-4 border-b border-gray-200">
-        {collapsed ? <Logo small /> : <Logo />}
-      </div>
+  {collapsed ? (
+    <span className="font-bold text-xs tracking-wide text-[var(--primary-color)]">POS</span>
+  ) : (
+    <span className="font-extrabold text-lg tracking-tight text-gray-900">
+      Pos by <span className="text-[var(--primary-color)]">Yeningx</span>
+    </span>
+  )}
+</div>
 
       {userData && !collapsed && (
         <div className="px-4 py-2 border-b border-gray-200">
@@ -174,8 +180,8 @@ const Sidebar = () => {
 
       <nav className="flex-1 overflow-y-auto">
         <ul className={cn(
-          "space-y-1",
-          collapsed ? "px-1" : "px-2"
+          "space-y-2",
+          collapsed ? "px-1 py-2" : "px-2"
         )}>
           {filteredNavItems.map((item) => (
             <li key={item.name}>
