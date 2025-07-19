@@ -1,0 +1,318 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Protest+Strike&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer utilities {
+  /* Hide scrollbar for Chrome, Safari and Opera */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Hide scrollbar for IE, Edge and Firefox */
+  .no-scrollbar {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+  }
+}
+
+/* Global scrollbar hiding */
+* {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none;  /* Internet Explorer and Edge */
+}
+
+*::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
+}
+
+@layer base {
+  :root {
+    /* Theme colors from settings */
+    --primary-color: #FF7700;
+    --secondary-color: #7c3aed;
+    --button-primary: var(--primary-color);
+    --button-primary-hover: #077896; /* Darker version of primary */
+    --accent-color: var(--primary-color);
+    --chart-primary: var(--primary-color);
+    --chart-secondary: var(--secondary-color);
+    
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+
+    /* Override primary with our theme color */
+    --primary: var(--primary-color);
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+
+    /* Use primary color for accent */
+    --accent: var(--primary-color);
+    --accent-foreground: 222.2 47.4% 11.2%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: var(--primary-color);
+
+    --radius: 0.5rem;
+
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: var(--primary-color);
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: var(--primary-color);
+  }
+
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 24 95% 53%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 212.7 26.8% 83.9%;
+    
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 24 95% 53%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 24 95% 53%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html, 
+  body, 
+  #root {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+  }
+
+  #root {
+    display: flex;
+    flex-direction: column;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+    font-weight: 600;
+  }
+  
+  .font-numeric {
+    font-feature-settings: 'tnum' on, 'lnum' on;
+  }
+  
+  .active-nav-link {
+    @apply bg-viilare-100 text-viilare-600 font-medium;
+  }
+
+  /* Style for pages that need full-height scroll containers */
+  .page-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .page-container::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Make sure forms scroll properly on mobile */
+  .form-scroll-container {
+    flex: 1;
+    overflow-y: auto;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .form-scroll-container::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* Global scroll handling */
+html, body, #root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+#root {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Hide scrollbar but keep functionality */
+.scrollbar-hide {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none;  /* Internet Explorer 10+ */
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none; /* Safari and Chrome */
+}
+
+/* Override Tailwind classes with our theme colors */
+.bg-viilare-500 {
+  background-color: var(--primary-color) !important;
+}
+
+.bg-viilare-600 {
+  background-color: color-mix(in srgb, var(--primary-color), #000 10%) !important;
+}
+
+.text-viilare-500 {
+  color: var(--primary-color) !important;
+}
+
+.border-viilare-500 {
+  border-color: var(--primary-color) !important;
+}
+
+.hover\:bg-viilare-600:hover {
+  background-color: color-mix(in srgb, var(--primary-color), #000 10%) !important;
+}
+
+/* Apply primary color to UI components */
+.btn-primary, 
+.btn, 
+[type='submit'],
+.button-primary {
+  background-color: var(--primary-color) !important;
+  border-color: var(--primary-color) !important;
+}
+
+.btn-primary:hover, 
+.btn:hover, 
+[type='submit']:hover,
+.button-primary:hover {
+  background-color: var(--button-primary-hover) !important;
+  border-color: var(--button-primary-hover) !important;
+}
+
+/* Apply to sidebar active items */
+.sidebar-item.active,
+.sidebar-item.active:hover {
+  background-color: color-mix(in srgb, var(--primary-color), white 80%) !important;
+  color: var(--primary-color) !important;
+  border-left-color: var(--primary-color) !important;
+}
+
+/* Apply to focus rings */
+*:focus-visible {
+  outline-color: var(--primary-color) !important;
+}
+
+/* Apply to checkboxes, radio buttons, and switches */
+input[type="checkbox"]:checked,
+input[type="radio"]:checked {
+  background-color: var(--primary-color) !important;
+  border-color: var(--primary-color) !important;
+}
+
+/* Apply to progress bars */
+progress::-webkit-progress-value,
+.progress-bar .progress {
+  background-color: var(--primary-color) !important;
+}
+
+/* Apply to tabs */
+.tabs-trigger[data-state="active"] {
+  color: var(--primary-color) !important;
+  border-bottom-color: var(--primary-color) !important;
+}
+
+/* Apply to links */
+a:not(.no-style) {
+  color: var(--primary-color);
+}
+
+a:not(.no-style):hover {
+  color: var(--button-primary-hover);
+}
+
+/* Apply to toggle UI elements */
+[data-state="checked"].toggle,
+[data-state="checked"].switch,
+[type="checkbox"]:checked + label .toggle-bg,
+.toggle-input:checked + .toggle-label,
+.switch-input:checked + .switch-label {
+  background-color: var(--primary-color) !important;
+  border-color: var(--primary-color) !important;
+}
+
+/* Apply to all toggle components from shadcn and other libraries */
+[role="switch"][data-state="checked"],
+[role="checkbox"][data-state="checked"],
+.toggle[data-state="checked"],
+.switch[data-state="checked"] {
+  background-color: var(--primary-color) !important;
+  border-color: var(--primary-color) !important;
+}
+
+@layer utilities {
+  .scroll-container {
+    @apply overflow-y-auto;
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+    scroll-behavior: smooth;
+  }
+
+  .scroll-container::-webkit-scrollbar {
+    display: none;  /* Chrome, Safari and Opera */
+  }
+}
+
+
+
+
