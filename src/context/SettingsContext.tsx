@@ -1,4 +1,4 @@
-import { createContext, useContext, ReactNode, useState, useEffect } from 'react';
+import { createContext, useContext, ReactNode, useState, useEffect, useCallback, useMemo } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import {
@@ -21,6 +21,9 @@ type SettingsContextType = {
   updatePrimaryColor: (color: string) => Promise<void>;
   updateSecondaryColor: (color: string) => Promise<void>;
   resetToDefaults: () => Promise<void>;
+  // Table count specific methods
+  getTableCount: () => number;
+  updateTableCount: (count: number) => Promise<void>;
 };
 
 // Create the context
@@ -179,6 +182,25 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
     };
   }, []);
 
+  // Get current table count
+  const getTableCount = useCallback((): number => {
+    return settings.table_nos ?? 10; // Default to 10 if not set
+  }, [settings.table_nos]);
+
+  // Update table count
+  const updateTableCount = useCallback(async (count: number): Promise<void> => {
+    if (count < 1 || count > 100) {
+      throw new Error('Table count must be between 1 and 100');
+    }
+    
+    try {
+      await updateSettings({ table_nos: count });
+    } catch (error) {
+      console.error('Error updating table count:', error);
+      throw error; // Re-throw to allow error handling in the component
+    }
+  }, [settings.business_id]);
+
   // Update settings in database
   const updateSettings = async (updates: Partial<SettingsData>): Promise<SettingsData | null> => {
     if (!settings.business_id) {
@@ -187,6 +209,8 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
     }
     
     try {
+      setLoading(true);
+      
       // Get current user to check role
       const user = await getCurrentUser();
       if (!user) {
@@ -207,29 +231,41 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
         return null;
       }
       
-      // Call the service function to update settings in the database
-      const updatedSettings = await updateSettingsInDB(settings.business_id, updates);
+      // Update settings in database
+      const updated = await updateSettingsInDB(settings.business_id, updates);
       
-      if (!updatedSettings) {
-        console.error('Failed to update settings');
-        return null;
+      if (updated) {
+        // Update local state
+        setSettings(prev => ({
+          ...prev,
+          ...updates
+        }));
+        
+        // Apply theme colors if they were updated
+        if (updates.primary_color || updates.secondary_color) {
+          applyThemeColors(
+            updates.primary_color ?? settings.primary_color,
+            updates.secondary_color ?? settings.secondary_color
+          );
+        }
+        
+        toast({
+          title: 'Settings updated',
+          description: 'Your settings have been saved successfully.',
+        });
       }
       
-      // Update local state with the returned settings
-      setSettings(prevSettings => ({
-        ...prevSettings,
-        ...updatedSettings
-      }));
-      
-      // Apply theme colors if they were updated
-      if (updates.primary_color) {
-        applyThemeColors(updates.primary_color, settings.secondary_color);
-      }
-      
-      return updatedSettings;
+      return updated;
     } catch (error) {
-      console.error('Error in updateSettings:', error);
-      return null;
+      console.error('Error updating settings:', error);
+      toast({
+        title: 'Error',
+        description: 'Failed to update settings. Please try again.',
+        variant: 'destructive',
+      });
+      throw error; // Re-throw to allow error handling in the component
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -377,17 +413,29 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
     applyThemeColors(settings.primary_color, settings.secondary_color);
   }, [settings.primary_color, settings.secondary_color]);
 
+  // Memoize context value to prevent unnecessary re-renders
+  const contextValue = useMemo(() => ({
+    settings,
+    loading,
+    updateSettings,
+    updatePrimaryColor,
+    updateSecondaryColor,
+    resetToDefaults,
+    getTableCount,
+    updateTableCount,
+  }), [
+    settings, 
+    loading, 
+    updateSettings, 
+    updatePrimaryColor, 
+    updateSecondaryColor, 
+    resetToDefaults, 
+    getTableCount, 
+    updateTableCount
+  ]);
+
   return (
-    <SettingsContext.Provider
-      value={{
-        settings,
-        loading,
-        updateSettings,
-        updatePrimaryColor,
-        updateSecondaryColor,
-        resetToDefaults
-      }}
-    >
+    <SettingsContext.Provider value={contextValue}>
       {children}
     </SettingsContext.Provider>
   );

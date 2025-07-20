@@ -11,9 +11,9 @@ export default defineConfig({
     VitePWA({
       registerType: 'autoUpdate',
       manifest: {
-        name: 'VIILARE POS',
-        short_name: 'VIILARE',
-        description: 'VIILARE Point of Sale System',
+        name: 'YENINGX POS',
+        short_name: 'YENINGX',
+        description: 'YENINGX Point of Sale System',
         theme_color: '#4f46e5',
         icons: [
           {

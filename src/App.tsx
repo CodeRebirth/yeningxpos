@@ -7,6 +7,7 @@ import Layout from "@/components/Layout";
 import { useAuthContext } from "@/context/AuthContext";
 import { SettingsProvider } from "@/context/SettingsContext";
 import { CartProvider } from "@/context/CartContext";
+import { BusinessProvider } from "@/context/BusinessContext";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import { Loader2 } from "lucide-react";
 
@@ -30,6 +31,7 @@ import ResetPassword from "./pages/ResetPassword";
 import Marketplace from "./pages/Marketplace";
 import CartPage from "./pages/CartPage";
 import ProductDetail from "./pages/marketplace/[id]";
+import ReservationList from "./pages/ReservationList";
 
 function App() {
   const { session, setSession } = useAuthContext();
@@ -71,133 +73,151 @@ function App() {
   }, []);
 
   return (
-    <ThemeProvider defaultTheme="light">
+    <ThemeProvider defaultTheme="light" enableSystem={false} attribute="class">
       <SettingsProvider>
         <CartProvider>
-        <Router>
-          <Suspense>
-            <Routes>
-              <Route path="/login" element={<Login />} />
-              <Route path="/email-confirm" element={<EmailConfirm />} />
-              <Route path="/business-setup" element={<BusinessSetup />} />
-              <Route path="/unauthorized" element={<Unauthorized />} />
-              <Route path="/reset-password" element={<ResetPassword />} />
-              
-              {/* Marketplace Routes */}
-              <Route path="/marketplace">
-                <Route index element={
-                  <ProtectedRoute>
-                    <Marketplace />
-                  </ProtectedRoute>
-                } />
-                <Route path="cart" element={
-                  <ProtectedRoute>
-                    <CartPage />
-                  </ProtectedRoute>
-                } />
-                <Route path=":id" element={
-                  <ProtectedRoute>
-                    <ProductDetail />
-                  </ProtectedRoute>
-                } />
-              </Route>
-
-              <Route
-                path="/"
-                element={
-                  <ProtectedRoute>
-                    <Layout />
-                  </ProtectedRoute>
+          <BusinessProvider>
+            <Router>
+              <Toaster />
+              <Suspense
+                fallback={
+                  <div className="flex h-screen items-center justify-center">
+                    <Loader2 className="h-8 w-8 animate-spin" />
+                  </div>
                 }
               >
-                <Route
-                  index
-                  element={
-                    <ProtectedRoute allowedRoles={["admin", "manager"]}>
-                      <Suspense fallback={<Loader2 />}>
-                        <Dashboard />
-                      </Suspense>
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="pos"
-                  element={
-                    <Suspense fallback={<Loader2 />}>
-                      <POS />
-                    </Suspense>
-                  }
-                />
-                <Route
-                  path="inventory"
-                  element={
-                    <Suspense fallback={<Loader2 />}>
-                      <Inventory />
-                    </Suspense>
-                  }
-                />
-                <Route
-                  path="settings"
-                  element={
-                    <ProtectedRoute allowedRoles={["admin", "manager"]}>
-                      <Suspense fallback={<Loader2 />}>
-                        <Settings />
-                      </Suspense>
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="support"
-                  element={
-                    <Suspense fallback={<Loader2 />}>
-                      <Support />
-                    </Suspense>
-                  }
-                />
-                <Route
-                  path="receipts"
-                  element={
-                    <Suspense fallback={<Loader2 />}>
-                      <Receipts />
-                    </Suspense>
-                  }
-                />
-                <Route
-                  path="account"
-                  element={
-                    <Suspense fallback={<Loader2 />}>
-                      <Account />
-                    </Suspense>
-                  }
-                />
-                <Route
-                  path="staff-attendance"
-                  element={
-                    <ProtectedRoute allowedRoles={["admin", "manager"]}>
-                      <Suspense fallback={<Loader2 />}>
-                        <StaffAttendance />
-                      </Suspense>
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="manage-users"
-                  element={
-                    <ProtectedRoute allowedRoles={["admin"]}>
-                      <Suspense fallback={<Loader2 />}>
-                        <ManageUsers />
-                      </Suspense>
-                    </ProtectedRoute>
-                  }
-                />
-              </Route>
-              
-              <Route path="*" element={<NotFound />} />
-              </Routes>
-            </Suspense>
-          </Router>
+                <Routes>
+                  <Route path="/login" element={<Login />} />
+                  <Route path="/email-confirm" element={<EmailConfirm />} />
+                  <Route path="/business-setup" element={<BusinessSetup />} />
+                  <Route path="/unauthorized" element={<Unauthorized />} />
+                  <Route path="/reset-password" element={<ResetPassword />} />
+                  
+                  {/* Marketplace Routes */}
+                  <Route path="/marketplace">
+                    <Route index element={
+                      <ProtectedRoute>
+                        <Marketplace />
+                      </ProtectedRoute>
+                    } />
+                    <Route path="cart" element={
+                      <ProtectedRoute>
+                        <CartPage />
+                      </ProtectedRoute>
+                    } />
+                    <Route path=":id" element={
+                      <ProtectedRoute>
+                        <ProductDetail />
+                      </ProtectedRoute>
+                    } />
+                  </Route>
+
+                  <Route
+                    path="/"
+                    element={
+                      <ProtectedRoute>
+                        <Layout />
+                      </ProtectedRoute>
+                    }
+                  >
+                    <Route
+                      index
+                      element={
+                        <ProtectedRoute allowedRoles={["admin", "manager"]}>
+                          <Suspense fallback={<Loader2 />}>
+                            <Dashboard />
+                          </Suspense>
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="pos"
+                      element={
+                        <Suspense fallback={<Loader2 />}>
+                          <POS />
+                        </Suspense>
+                      }
+                    />
+                    <Route
+                      path="inventory"
+                      element={
+                        <Suspense fallback={<Loader2 />}>
+                          <Inventory />
+                        </Suspense>
+                      }
+                    />
+                    <Route
+                      path="settings"
+                      element={
+                        <ProtectedRoute allowedRoles={["admin", "manager"]}>
+                          <Suspense fallback={<Loader2 />}>
+                            <Settings />
+                          </Suspense>
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="support"
+                      element={
+                        <Suspense fallback={<Loader2 />}>
+                          <Support />
+                        </Suspense>
+                      }
+                    />
+                    <Route
+                      path="receipts"
+                      element={
+                        <Suspense fallback={<Loader2 />}>
+                          <Receipts />
+                        </Suspense>
+                      }
+                    />
+                    <Route
+                      path="account"
+                      element={
+                        <Suspense fallback={<Loader2 />}>
+                          <Account />
+                        </Suspense>
+                      }
+                    />
+                    <Route
+                      path="reservations"
+                      element={
+                        <ProtectedRoute allowedRoles={["admin", "manager", "staff"]}>
+                          <Suspense fallback={<Loader2 />}>
+                            <ReservationList />
+                          </Suspense>
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="staff-attendance"
+                      element={
+                        <ProtectedRoute allowedRoles={["admin", "manager"]}>
+                          <Suspense fallback={<Loader2 />}>
+                            <StaffAttendance />
+                          </Suspense>
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="manage-users"
+                      element={
+                        <ProtectedRoute allowedRoles={["admin"]}>
+                          <Suspense fallback={<Loader2 />}>
+                            <ManageUsers />
+                          </Suspense>
+                        </ProtectedRoute>
+                      }
+                    />
+                  </Route>
+                  
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+              </Suspense>
+            </Router>
+          </BusinessProvider>
         </CartProvider>
-        <Toaster />
       </SettingsProvider>
     </ThemeProvider>
   );

@@ -18,12 +18,11 @@ const Sidebar = () => {
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
-        if (!session) {
-          // If authenticated, redirect to Dashboard
-         navigate('/login');
-        }
-    }, [session]);
-  
+    if (!session) {
+      // If authenticated, redirect to Dashboard
+      navigate('/login');
+    }
+  }, [session]);
 
   // Function to handle mouse enter - expand sidebar
   const handleMouseEnter = () => {
@@ -64,31 +63,30 @@ const Sidebar = () => {
     };
   }, []);
 
-  
-
-   const navItems = [
+  const navItems = [
     { name: 'Dashboard', path: '/', icon: Home, roles: ['admin', 'manager'] },
     { name: 'POS', path: '/pos', icon: ShoppingCart, roles: ['admin', 'manager', 'staff'] },
+    { name: 'Reservations', path: '/reservations', icon: ClipboardCheck, roles: ['admin', 'manager', 'staff'] },
     { name: 'Staff Attendance', path: '/staff-attendance', icon: ClipboardCheck, roles: ['admin', 'manager'] },
     { name: 'Inventory', path: '/inventory', icon: Package, roles: ['admin', 'manager', 'staff'] },
     { name: 'Receipts', path: '/receipts', icon: Receipt, roles: ['admin', 'manager', 'staff'] },
     { name: 'Account', path: '/account', icon: User },
-    { name: 'Manage Users', path: '/manage-users', icon: Users, roles: ['admin', 'manager'] }, 
-    { name: 'Settings', path: '/settings', icon: Cog, roles: ['admin', 'manager'] },
+    { name: 'Manage Users', path: '/manage-users', icon: Users, roles: ['admin', 'manager'] },
+    { name: 'Business Settings', path: '/settings', icon: Cog, roles: ['admin', 'manager'] },
     { name: 'Help & Support', path: '/support', icon: HelpCircle },
-    ];
+  ];
 
   const handleLogout = async () => {
     try {
       // Disable the button to prevent multiple clicks
       const button = document.getElementById('logout-button');
       if (button) button.setAttribute('disabled', 'true');
-      
+
       // Clear all auth-related localStorage items first
       localStorage.removeItem('currentPath');
       localStorage.removeItem('lastAuthenticatedPath');
       localStorage.removeItem('userRole');
-      
+
       // Clear any Supabase-related cookies
       document.cookie.split(';').forEach(cookie => {
         const [name] = cookie.trim().split('=');
@@ -96,33 +94,33 @@ const Sidebar = () => {
           document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
         }
       });
-      
+
       // Perform logout
       const success = await signOut();
-      
+
       // Show success toast
       toast({
         title: "Logged out successfully",
         description: "You have been logged out from the system"
       });
-      
+
       // Force navigation to login page
       window.location.href = '/login';
       return; // Stop execution here
     } catch (error) {
       console.error('Logout error:', error);
-      
+
       // Re-enable the button
       const button = document.getElementById('logout-button');
       if (button) button.removeAttribute('disabled');
-      
+
       // Show error toast
       toast({
         title: "Logout failed",
         description: "Failed to log out. Please try again.",
         variant: "destructive"
       });
-      
+
       // Try navigation as a last resort
       try {
         await navigate('/login');
@@ -140,7 +138,7 @@ const Sidebar = () => {
   });
 
   if (loading) {
-    return (<Loader2 className="animate-spin"/>)
+    return <Loader2 className="animate-spin" />;
   }
 
   return (
@@ -154,14 +152,14 @@ const Sidebar = () => {
       onMouseLeave={handleMouseLeave}
     >
       <div className="flex items-center justify-center p-4 border-b border-gray-200">
-  {collapsed ? (
-    <span className="font-bold text-xs tracking-wide text-[var(--primary-color)]">POS</span>
-  ) : (
-    <span className="font-extrabold text-lg tracking-tight text-gray-900">
-      Pos by <span className="text-[var(--primary-color)]">Yeningx</span>
-    </span>
-  )}
-</div>
+        {collapsed ? (
+          <span className="font-bold text-xs tracking-wide text-[var(--primary-color)]">POS</span>
+        ) : (
+          <span className="font-extrabold text-lg tracking-tight text-gray-900">
+            Pos by <Logo />
+          </span>
+        )}
+      </div>
 
       {userData && !collapsed && (
         <div className="px-4 py-2 border-b border-gray-200">
@@ -179,13 +177,10 @@ const Sidebar = () => {
       )}
 
       <nav className="flex-1 overflow-y-auto">
-        <ul className={cn(
-          "space-y-2",
-          collapsed ? "px-1 py-2" : "px-2"
-        )}>
+        <ul className={cn("space-y-2", collapsed ? "px-1 py-2" : "px-2")}>
           {filteredNavItems.map((item) => (
             <li key={item.name}>
-               <NavLink
+              <NavLink
                 to={item.path}
                 onClick={handleMenuItemClick}
                 className={({ isActive }) =>
@@ -197,7 +192,6 @@ const Sidebar = () => {
                 }
                 style={({ isActive }) => ({
                   backgroundColor: isActive ? `color-mix(in srgb, var(--primary-color), white 90%)` : '',
-                  color: isActive ? 'var(--primary-color)' : '',
                   borderLeft: isActive ? '3px solid var(--primary-color)' : ''
                 })}
                 onMouseEnter={(e) => {
@@ -212,59 +206,44 @@ const Sidebar = () => {
                 }}
                 title={collapsed ? item.name : undefined}
               >
-                <item.icon className={cn(
-                  "h-5 w-5",
-                  collapsed ? "" : "mr-3"
-                )} />
-                {!collapsed && <span>{item.name}</span>}
+                {({ isActive }) => (
+                  <>
+                    <item.icon className={cn(
+                      "h-5 w-5",
+                      collapsed ? "" : "mr-3",
+                      isActive ? "text-accent" : "text-accent/80"
+                    )} />
+                    {!collapsed && (
+                      <span className={cn(
+                        "text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1 line-clamp-1",
+                        isActive ? "text-[var(--primary-color)]" : ""
+                      )}>
+                        {item.name}
+                      </span>
+                    )}
+                  </>
+                )}
               </NavLink>
             </li>
           ))}
-          {/* Show logout as a menu item in collapsed/mobile view */}
-          {collapsed && (
-            <li>
-              <button
-                id="logout-button"
-                onClick={async () => {
-                  await handleLogout();
-                  handleMenuItemClick();
-                }}
-                className={cn(
-                  "flex items-center w-full py-3 text-gray-600 rounded-md transition-colors duration-200 justify-center hover:text-[var(--primary-color)]"
-                )}
-                title="Sign out"
-              >
-                <LogOut className="h-4 w-4" />
-              </button>
-            </li>
-          )}
         </ul>
       </nav>
 
-      {/* Show logout at the bottom only on desktop/expanded */}
-      {!collapsed && (
-        <div className={cn(
-          "border-t border-gray-200",
-          collapsed ? "p-2" : "p-4"
-        )}>
-          <Button
-            id="logout-button"
-            onClick={handleLogout}
-            variant="ghost"
-            className={cn(
-              "w-full flex items-center text-gray-600 hover:text-[var(--primary-color)]",
-              collapsed ? "justify-center p-2" : "justify-center"
-            )}
-            title={collapsed ? "Sign out" : undefined}
-          >
-            <LogOut className={cn(
-              "h-4 w-4",
-              collapsed ? "" : "mr-2"
-            )} />
-            {!collapsed && "Sign out"}
-          </Button>
-        </div>
-      )}
+      <div className={cn("border-t border-gray-200", collapsed ? "p-2" : "p-4")}>
+        <Button
+          id="logout-button"
+          onClick={handleLogout}
+          variant="ghost"
+          className={cn(
+            "w-full flex items-center text-gray-600 hover:text-[var(--primary-color)]",
+            collapsed ? "justify-center p-2" : "justify-center"
+          )}
+          title={collapsed ? "Sign out" : undefined}
+        >
+          <LogOut className={cn("h-4 w-4", collapsed ? "" : "mr-2")} />
+          {!collapsed && "Sign out"}
+        </Button>
+      </div>
     </div>
   );
 };

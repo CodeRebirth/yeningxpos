@@ -41,6 +41,10 @@ interface Attendance {
 }
 
 export default function StaffAttendance() {
+  // ...existing state
+  const [punctualLoading, setPunctualLoading] = useState(true);
+  const [punctualStaff, setPunctualStaff] = useState<User[]>([]);
+  const [punctualAverages, setPunctualAverages] = useState<{ [userId: string]: number }>({});
   const navigate = useNavigate();
   const { session } = useAuthContext();
   const { userData } = useAppStore();
@@ -55,8 +59,59 @@ export default function StaffAttendance() {
       navigate('/login');
       return;
     }
+    // Restrict access to admin or manager only
+    if (userData.role !== 'admin' && userData.role !== 'manager') {
+      navigate('/dashboard');
+      return;
+    }
     fetchStaffAndAttendance();
   }, [session, selectedDate]);
+
+  // Fetch all attendance for punctuality calculation
+  useEffect(() => {
+    const fetchPunctuality = async () => {
+      if (!userData) return;
+      setPunctualLoading(true);
+      try {
+        const businessId = userData.business_id;
+        // Fetch all present attendance with check_in for this business
+        const { data: allAttendance, error } = await supabase
+          .from('attendance')
+          .select('*')
+          .eq('business_id', businessId)
+          .eq('status', 'present')
+          .not('check_in', 'is', null);
+        if (error) throw error;
+        // Group check-ins by user
+        const checkinMap: { [userId: string]: number[] } = {};
+        (allAttendance || []).forEach(a => {
+          if (!a.user_id || !a.check_in) return;
+          const date = new Date(a.check_in);
+          const minutes = date.getHours() * 60 + date.getMinutes();
+          if (!checkinMap[a.user_id]) checkinMap[a.user_id] = [];
+          checkinMap[a.user_id].push(minutes);
+        });
+        // Calculate averages
+        const averages: { [userId: string]: number } = {};
+        Object.entries(checkinMap).forEach(([userId, arr]) => {
+          averages[userId] = arr.reduce((a, b) => a + b, 0) / arr.length;
+        });
+        setPunctualAverages(averages);
+        // Sort staff by avg check-in time (ascending)
+        const sortedStaff = (staff || [])
+          .filter(member => averages[member.id] !== undefined)
+          .sort((a, b) => averages[a.id] - averages[b.id])
+          .slice(0, 3);
+        setPunctualStaff(sortedStaff);
+      } catch (err) {
+        setPunctualStaff([]);
+        setPunctualAverages({});
+      } finally {
+        setPunctualLoading(false);
+      }
+    };
+    fetchPunctuality();
+  }, [userData, staff]);
   
   // Auto-mark attendance when staff logs in (only for non-admin users)
   useEffect(() => {
@@ -262,32 +317,25 @@ export default function StaffAttendance() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <Card className="p-4 col-span-1 md:col-span-2 lg:col-span-1">
+        <Card className="p-4 col-span-1 md:col-span-2 lg:col-span-2">
           <h2 className="text-lg font-semibold mb-4">Select Date</h2>
-          <Calendar
-            mode="single"
-            selected={selectedDate}
-            onSelect={(date) => date && setSelectedDate(date)}
-            disabled={(date) => isAfter(startOfDay(date), endOfDay(new Date()))} // Disable future dates
-            className="rounded-md border p-auto"
-          />
-          <div className="mt-6 space-y-2">
-            <div className="flex items-center space-x-2">
-              <div className="w-3 h-3 rounded-full bg-green-500"></div>
-              <span className="text-sm">Present</span>
+          <div className="flex justify-center items-center">
+              <Calendar
+                mode="single"
+                selected={selectedDate}
+                onSelect={(date) => date && setSelectedDate(date)}
+                disabled={(date) => isAfter(startOfDay(date), endOfDay(new Date()))}
+                className="rounded-md border p-auto"
+              />
             </div>
-            <div className="flex items-center space-x-2">
-              <div className="w-3 h-3 rounded-full bg-red-500"></div>
-              <span className="text-sm">Absent</span>
-            </div>
-            <div className="flex items-center space-x-2">
-              <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
-              <span className="text-sm">Late</span>
-            </div>
-          </div>
+          <div className="mt-6 flex justify-center space-x-3">
+  <div className="w-3 h-3 rounded-full bg-green-500" title="Present"></div>
+  <div className="w-3 h-3 rounded-full bg-red-500" title="Absent"></div>
+  <div className="w-3 h-3 rounded-full bg-yellow-500" title="Late"></div>
+</div>
         </Card>
 
-        <Card className="p-4 col-span-1 lg:col-span-3 md:col-span-2 ">
+        <Card className="p-4 col-span-1 md:col-span-2 lg:col-span-2 ">
           <h2 className="text-lg font-semibold mb-4">Attendance Sheet</h2>
           {loading ? (
             <div className="flex justify-center items-center h-48">
@@ -325,31 +373,31 @@ export default function StaffAttendance() {
                     <TableCell>
                       <div className="flex space-x-2">
                         <Button
-                          size="sm"
+                          size="icon"
                           variant={getAttendanceStatus(member.id) === 'present' ? 'default' : 'outline'}
                           onClick={() => markAttendance(member.id, 'present')}
-                          className="flex items-center space-x-1"
+                          className={`rounded-full p-2 ${getAttendanceStatus(member.id) === 'present' ? 'bg-green-100 text-green-700' : 'hover:bg-green-50 text-green-700'}`}
+                          aria-label="Mark Present"
                         >
                           <CheckCircle className="h-4 w-4" />
-                          <span>Present</span>
                         </Button>
                         <Button
-                          size="sm"
+                          size="icon"
                           variant={getAttendanceStatus(member.id) === 'absent' ? 'default' : 'outline'}
                           onClick={() => markAttendance(member.id, 'absent')}
-                          className="flex items-center space-x-1"
+                          className={`rounded-full p-2 ${getAttendanceStatus(member.id) === 'absent' ? 'bg-red-100 text-red-700' : 'hover:bg-red-50 text-red-700'}`}
+                          aria-label="Mark Absent"
                         >
                           <XCircle className="h-4 w-4" />
-                          <span>Absent</span>
                         </Button>
                         <Button
-                          size="sm"
+                          size="icon"
                           variant={getAttendanceStatus(member.id) === 'late' ? 'default' : 'outline'}
                           onClick={() => markAttendance(member.id, 'late')}
-                          className="flex items-center space-x-1"
+                          className={`rounded-full p-2 ${getAttendanceStatus(member.id) === 'late' ? 'bg-yellow-100 text-yellow-700' : 'hover:bg-yellow-50 text-yellow-700'}`}
+                          aria-label="Mark Late"
                         >
                           <Clock className="h-4 w-4" />
-                          <span>Late</span>
                         </Button>
                       </div>
                     </TableCell>
@@ -359,6 +407,29 @@ export default function StaffAttendance() {
             </Table>
           )}
         </Card>
+      </div>
+
+      {/* Most Punctual Staff Row */}
+      <div className="mt-8">
+        <h3 className="text-lg font-semibold mb-2">Most Punctual Staff</h3>
+        {punctualLoading ? (
+          <div className="flex items-center space-x-2 text-gray-500"><Loader2 className="h-5 w-5 animate-spin" /> Loading...</div>
+        ) : punctualStaff.length === 0 ? (
+          <div className="text-gray-500">No punctuality data available.</div>
+        ) : (
+          <div className="flex flex-wrap gap-4">
+            {punctualStaff.map(member => (
+              <div key={member.id} className="flex items-center space-x-2 bg-gray-50 rounded-full px-4 py-2 shadow-sm">
+                <span className="font-medium">{member.first_name} {member.last_name}</span>
+                <span className="text-xs text-gray-500">(
+                  {punctualAverages[member.id] !== undefined ?
+                    `${Math.floor(punctualAverages[member.id] / 60).toString().padStart(2, '0')}:${Math.round(punctualAverages[member.id] % 60).toString().padStart(2, '0')}`
+                    : '--:--'}
+                )</span>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

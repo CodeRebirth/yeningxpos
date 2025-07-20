@@ -9,6 +9,7 @@ export type SettingsData = {
   address: string;
   phone_number: string;
   business_name: string;
+  table_nos: number; // Number of tables for reservations
 };
 
 // Default settings with no hardcoded business data
@@ -20,6 +21,7 @@ export const defaultSettings: SettingsData = {
   address: '',
   phone_number: '',
   business_name: '',
+  table_nos: 10, // Default number of tables
 };
 
 // Get current user

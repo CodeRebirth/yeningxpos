@@ -13,12 +13,12 @@ const Logo: React.FC<LogoProps> = ({ small = false }) => {
     >
       {small ? (
         <img
-          src="/small-logo.png"
-          alt="VIILARE"
+          src="/logonew.png"
+          alt="yeningxpos"
           className="h-8 w-8 object-contain mb-2"
         />
       ) : (
-        <img src="/logo.png" alt="VIILARE" className="h-14 w-auto mb-2" />
+        <img src="/logonew.png" alt="yeningxpos" className="h-14 w-auto mb-2" />
       )}
     </Link>
   );
