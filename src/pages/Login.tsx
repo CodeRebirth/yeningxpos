@@ -225,16 +225,16 @@ const Login = () => {
           {activeTab === 'login' ? (
             <div className="flex justify-center mb-2 transition-all duration-300 ease-in-out">
               <img 
-                src="/logo.png" 
-                alt="VIILARE" 
+                src="/logonew.png" 
+                alt="YENING X POS" 
                 className="w-auto h-16 sm:h-20 md:h-24 transition-all duration-300"
               />
             </div>
           ) : (
             <div className="flex justify-center transition-all duration-300 ease-in-out">
               <img 
-                src="/small-logo.png" 
-                alt="VIILARE" 
+                src="/logonew.png" 
+                alt="YENING X POS" 
                 className="w-auto h-5 transition-all duration-300"
               />
             </div>
@@ -329,7 +329,7 @@ const Login = () => {
                 <CardFooter className="px-3 sm:px-5 pb-3 sm:pb-5 pt-0">
                   <Button
                     type="submit"
-                    className="w-full bg-viilare-500 hover:bg-viilare-600 h-10 sm:h-11 md:h-12 text-xs sm:text-sm md:text-base transition-all"
+                    className="w-full bg-viilare-500 text-white hover:bg-viilare-600 h-10 sm:h-11 md:h-12 text-xs sm:text-sm md:text-base transition-all"
                     disabled={isLoading}
                   >
                     {isLoading ? (
@@ -448,7 +448,7 @@ const Login = () => {
                 <CardFooter className="px-3 sm:px-5 pb-3 sm:pb-5 pt-0">
                   <Button
                     type="submit"
-                    className="w-full bg-viilare-500 hover:bg-viilare-600 h-10 sm:h-11 md:h-12 text-xs sm:text-sm md:text-base transition-all"
+                    className="w-full bg-viilare-500 text-white hover:bg-viilare-600 h-10 sm:h-11 md:h-12 text-xs sm:text-sm md:text-base transition-all"
                     disabled={isRegisterLoading}
                   >
                     {isRegisterLoading ? "Creating account..." : "Create account"}

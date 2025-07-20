@@ -32,10 +32,10 @@
 @layer base {
   :root {
     /* Theme colors from settings */
-    --primary-color: #FF7700;
-    --secondary-color: #7c3aed;
+    --primary-color: #7F00FF;
+    --secondary-color: #9d4dff;
     --button-primary: var(--primary-color);
-    --button-primary-hover: #077896; /* Darker version of primary */
+    --button-primary-hover: #7200e6;
     --accent-color: var(--primary-color);
     --chart-primary: var(--primary-color);
     --chart-secondary: var(--secondary-color);

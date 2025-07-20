@@ -15,8 +15,8 @@ export type SettingsData = {
 // Default settings with no hardcoded business data
 export const defaultSettings: SettingsData = {
   business_id: null,
-  primary_color: '#FF7700', // Default primary color
-  secondary_color: '#7c3aed', // Default secondary color
+  primary_color: '#7F00FF', // Default primary color (purple)
+  secondary_color: '#9d4dff', // Default secondary color (lighter purple)
   tax_rate: 5.0, // Default tax rate
   address: '',
   phone_number: '',
